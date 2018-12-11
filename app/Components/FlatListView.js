@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   item : {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: "#55333333",
+    //backgroundColor: "#55333333",
     justifyContent:'space-around'   // 子元素沿主轴的对齐方式
     //padding : 20
   },
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   separator : {
     width:screen.width-20,
-    height:1,
+    height:0.5,
     backgroundColor:'green',
     marginLeft: 10,
     marginRight: 10,
