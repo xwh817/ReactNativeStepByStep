@@ -22,7 +22,7 @@ type Props = {};
 const hello = 'Hello React-native, I\'m xwh ';
 
 
-export default class App extends Component<Props> {
+export default class Hello extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
