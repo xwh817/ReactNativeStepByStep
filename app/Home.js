@@ -9,6 +9,7 @@ export default class Home extends Component {
         <Button text='Hello React-Native' onPress={() => this.props.navigation.navigate('Hello')}/>
         <Button text='FlatListView' onPress={() => this.props.navigation.navigate('ListView')}/>
         <Button text='FlexLayout' onPress={() => this.props.navigation.navigate('Flex')}/>
+          <Button text='VideoPlayer' onPress={() => this.props.navigation.navigate('Video')}/>
       </View>
     );
   }
