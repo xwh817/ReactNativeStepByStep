@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {StyleSheet, View } from 'react-native';
 import Button from './Components/Button';
+import PanResponder from "./PanResponder";
 
 export default class Home extends Component {
   render() {
@@ -10,6 +11,7 @@ export default class Home extends Component {
         <Button text='FlatListView' onPress={() => this.props.navigation.navigate('ListView')}/>
         <Button text='FlexLayout' onPress={() => this.props.navigation.navigate('Flex')}/>
           <Button text='VideoPlayer' onPress={() => this.props.navigation.navigate('Video')}/>
+        <Button text='PanResponder手势响应' onPress={() => this.props.navigation.navigate('PanResponder')}/>
       </View>
     );
   }

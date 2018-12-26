@@ -4,6 +4,7 @@ import Home from './Home';
 import FlexBoxLayout from './FlexBox';
 import FlatListView from './Components/FlatListView';
 import VideoPlayer from './VideoPlayer';
+import PanResponder from './PanResponder';
 
 const rootNavigatior = createStackNavigator(
     {
@@ -36,10 +37,29 @@ const rootNavigatior = createStackNavigator(
             navigationOptions: {
                 headerTitle: 'react-native-video',
             }
+        },
+        PanResponder: {
+            screen: PanResponder,
+            navigationOptions: {
+                headerTitle: 'PanResponder手势响应',
+            }
         }
     },
     {
         initialRouteName: 'Home',
+        /* 自定义公用属性 */
+        defaultNavigationOptions: {
+            //header:null,
+            headerStyle: {
+                backgroundColor: '#f4511e',
+                height: 60
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                fontWeight: 'bold',
+                fontSize: 18,
+            },
+        },
     }
 );
 

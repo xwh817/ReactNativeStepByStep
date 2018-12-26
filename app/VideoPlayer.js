@@ -8,11 +8,15 @@ const videoUrl = 'http://s2.turingcat.com/eh5v.files/html5video/Turingcat2.mp4_2
 
 export default class VideoPlayer extends Component {
 
+    // 在子页面中对navigationOptions进行配置
     static navigationOptions = {
         header: null   // 去掉顶部标题
     };
 
+
     progressWidth = 0;
+    progressLeft = 0;
+    isPressed = false;
 
     state = {
         rate: 1,
@@ -22,12 +26,11 @@ export default class VideoPlayer extends Component {
         duration: 0,
         currentTime: 0,
         paused: false,
+        progressPosition: 0,
     };
 
 
     render() {
-        //const flexCompleted = this.getCurrentTimePercentage() * 100;
-        //const flexRemaining = (1 - this.getCurrentTimePercentage()) * 100;
         return (
             <View style={styles.container}>
                 <Video source={{uri: videoUrl}}   // Can be a URL or a local file.
@@ -66,9 +69,20 @@ export default class VideoPlayer extends Component {
 
                     <View style={styles.progress} onLayout={(e) => {
                         this.progressWidth = e.nativeEvent.layout.width;
-                        console.log("获取宽度：" + this.progressWidth);
+                        this.progressLeft = e.nativeEvent.layout.x;
+                        console.log("获取宽度：" + this.progressWidth + ", 位置：" + this.progressLeft);
                     }}>
-                        <View style={[styles.innerProgressCompleted, {width: this.state.duration > 0 ? this.progressWidth * this.state.currentTime / this.state.duration : 0}]}/>
+                        <View style={[styles.innerProgressCompleted,
+                            {width: this.state.progressPosition}]}/>
+                        <View style={[styles.progressIcon,
+                            {left: this.state.progressPosition - 10}]}
+
+                              onStartShouldSetResponder={() => true}
+                              onMoveShouldSetResponder={() => true}
+                              onResponderGrant={(event) => this.onGrant(event)}
+                              onResponderMove={(event) => this.onMoving(event)}
+                              onResponderEnd={(event) => this.onPressEnd(event)}
+                        />
                     </View>
 
                     <Text style={styles.timeText}>
@@ -87,11 +101,35 @@ export default class VideoPlayer extends Component {
 
     }
 
-    getProgressWidth() {
-        let width = this.state.duration > 0 ? progressWidth * this.state.currentTime / this.state.duration : 0;
-        console.log("getProgressWidth: " + width);
-        return width;
+
+    onGrant(event) {
+        this.isPressed = true;
     }
+
+    /**
+     * 元素position: 'absolute'，设置top是从标题栏之下开始的，但pageX是根据整个页面的，所以要减去headerHeight
+     * @param event
+     */
+    onMoving(event) {
+        let mX = event.nativeEvent.pageX;
+        let left = mX - styles.progressIcon.width / 2 - this.progressLeft;
+        if (left > 0 && left < this.progressWidth) {
+            this.setState({
+                currentTime: this.state.duration * left / this.progressWidth,
+                progressPosition: left,
+            })
+        }
+    }
+
+    onPressEnd(event) {
+        this.isPressed = false;
+        this.onMoving(event);
+        this.player.seek(this.state.currentTime)
+    }
+
+
+
+
 
     onBuffer() {
         console.log("onBuffer");
@@ -107,8 +145,13 @@ export default class VideoPlayer extends Component {
     };
 
     onProgress = (data) => {
-        this.setState({currentTime: data.currentTime});
-        //console.log("onProgress: " + data.currentTime);
+        if (!this.isPressed) {
+            this.setState({
+                currentTime: data.currentTime,
+                progressPosition: this.state.duration > 0 ? this.progressWidth * data.currentTime / this.state.duration : 0
+            });
+            //console.log("onProgress: " + data.currentTime);
+        }
     };
 
     onEnd = () => {
@@ -183,12 +226,23 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 10,
         borderRadius: 2,
-        overflow: 'hidden',
+        //overflow: 'hidden',
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#2C2C2C',
     },
     innerProgressCompleted: {
         height: 10,
+        borderRadius: 2,
         backgroundColor: '#cccccc',
+    },
+    progressIcon: {
+        width: 20,
+        height: 20,
+        position: 'absolute',
+        backgroundColor: '#dddddd',
+        borderStyle: 'solid',
+        borderRadius: 10,
     },
     rateControl: {
         flex: 1,
