@@ -9,9 +9,9 @@ const videoUrl = 'http://s2.turingcat.com/eh5v.files/html5video/Turingcat2.mp4_2
 export default class VideoPlayer extends Component {
 
     // 在子页面中对navigationOptions进行配置
-    static navigationOptions = {
+    /*static navigationOptions = {
         header: null   // 去掉顶部标题
-    };
+    };*/
 
 
     progressWidth = 0;
@@ -67,21 +67,28 @@ export default class VideoPlayer extends Component {
                         {StringUtil.formatTime(this.state.currentTime)}
                     </Text>
 
-                    <View style={styles.progress} onLayout={(e) => {
-                        this.progressWidth = e.nativeEvent.layout.width;
-                        this.progressLeft = e.nativeEvent.layout.x;
-                        console.log("获取宽度：" + this.progressWidth + ", 位置：" + this.progressLeft);
-                    }}>
-                        <View style={[styles.innerProgressCompleted,
-                            {width: this.state.progressPosition}]}/>
+                    <View style={styles.progress}
+                          onLayout={(e) => {
+                              this.progressWidth = e.nativeEvent.layout.width;
+                              this.progressLeft = e.nativeEvent.layout.x;
+                              console.log("获取宽度：" + this.progressWidth + ", 位置：" + this.progressLeft);
+                          }}
+
+                          onStartShouldSetResponder={() => true}
+                          onMoveShouldSetResponder={() => true}
+                          onResponderGrant={(event) => this.onGrant(event)}
+                          onResponderMove={(event) => this.onMoving(event)}
+                          onResponderEnd={(event) => this.onPressEnd(event)}
+                    >
+
+                        <View style={styles.progressBackground}>
+                            <View style={[styles.innerProgressCompleted,
+                                {width: this.state.progressPosition}]}/>
+                            {/*如果还要加其他进度条，在这儿加*/}
+                        </View>
+
                         <View style={[styles.progressIcon,
                             {left: this.state.progressPosition - 10}]}
-
-                              onStartShouldSetResponder={() => true}
-                              onMoveShouldSetResponder={() => true}
-                              onResponderGrant={(event) => this.onGrant(event)}
-                              onResponderMove={(event) => this.onMoving(event)}
-                              onResponderEnd={(event) => this.onPressEnd(event)}
                         />
                     </View>
 
@@ -106,14 +113,11 @@ export default class VideoPlayer extends Component {
         this.isPressed = true;
     }
 
-    /**
-     * 元素position: 'absolute'，设置top是从标题栏之下开始的，但pageX是根据整个页面的，所以要减去headerHeight
-     * @param event
-     */
     onMoving(event) {
-        let mX = event.nativeEvent.pageX;
-        let left = mX - styles.progressIcon.width / 2 - this.progressLeft;
-        if (left > 0 && left < this.progressWidth) {
+        let mX = event.nativeEvent.pageX;   // 相对于父组件位置
+        let left = mX - styles.progressIcon.width / 2 - this.progressLeft;  // 计算在组件内的位置
+        //let left = event.nativeEvent.locationX;
+        if (left >= 0 && left <= this.progressWidth) {
             this.setState({
                 currentTime: this.state.duration * left / this.progressWidth,
                 progressPosition: left,
@@ -126,9 +130,6 @@ export default class VideoPlayer extends Component {
         this.onMoving(event);
         this.player.seek(this.state.currentTime)
     }
-
-
-
 
 
     onBuffer() {
@@ -224,16 +225,22 @@ const styles = StyleSheet.create({
     },
     progress: {
         flex: 1,
-        height: 10,
-        borderRadius: 2,
+        height: 30,
+        padding: 10,
         //overflow: 'hidden',
-        flexDirection: 'row',
-        alignItems: 'center',
+        //flexDirection: 'row',
+        //alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'transparent',
+    },
+    progressBackground: {
+        height: 4,
+        borderRadius: 2,
+        overflow: 'hidden',
         backgroundColor: '#2C2C2C',
     },
     innerProgressCompleted: {
         height: 10,
-        borderRadius: 2,
         backgroundColor: '#cccccc',
     },
     progressIcon: {

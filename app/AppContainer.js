@@ -5,6 +5,7 @@ import FlexBoxLayout from './FlexBox';
 import FlatListView from './Components/FlatListView';
 import VideoPlayer from './VideoPlayer';
 import PanResponder from './PanResponder';
+import MyComponents from './MyComponents';
 
 const rootNavigatior = createStackNavigator(
     {
@@ -42,6 +43,12 @@ const rootNavigatior = createStackNavigator(
             screen: PanResponder,
             navigationOptions: {
                 headerTitle: 'PanResponder手势响应',
+            }
+        },
+        MyComponents: {
+            screen: MyComponents,
+            navigationOptions: {
+                headerTitle: 'MyComponents',
             }
         }
     },
