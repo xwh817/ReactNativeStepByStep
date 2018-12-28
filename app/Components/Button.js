@@ -16,8 +16,7 @@ export default class Button extends Component {
 
 const styles = StyleSheet.create({
   button: {
-    height: 60,
-    //width: 300,
+    height: 52,
     borderRadius:6,
     marginBottom:4,
     justifyContent: 'center',

@@ -12,7 +12,7 @@ const rootNavigatior = createStackNavigator(
         Home: {
             screen: Home,
             navigationOptions: {
-                headerTitle: 'Home',
+                headerTitle: 'React-native step by step',
             }
         },
         Hello: {
@@ -37,6 +37,7 @@ const rootNavigatior = createStackNavigator(
             screen: VideoPlayer,
             navigationOptions: {
                 headerTitle: 'react-native-video',
+                header:null,
             }
         },
         PanResponder: {
@@ -58,8 +59,8 @@ const rootNavigatior = createStackNavigator(
         defaultNavigationOptions: {
             //header:null,
             headerStyle: {
-                backgroundColor: '#f4511e',
-                height: 60
+                backgroundColor: '#e4511e',
+                height: 52
             },
             headerTintColor: '#fff',
             headerTitleStyle: {
