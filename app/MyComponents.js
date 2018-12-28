@@ -15,34 +15,26 @@ export default class MyComponents extends Component {
                 <Text style={{
                     textAlign: 'center',
                     color: '#88cc33',
-                    margin: 20,
+                    marginTop: 20,
                     fontSize: 24,
                     fontWeight: 'bold',
                 }}>{this.state.value}</Text>
 
-                <SeekBar style={{margin: 20, padding: 40, backgroundColor:'red'}}
+                <SeekBar
                          onProgressChanged={(progress) => this.onProgressChanged(progress)}
-                         max={200}
                          progress={this.state.value}
                 />
 
-                <SeekBar style={{margin: 20, backgroundColor:'red'}}
-                         progressBackgroundColor='#ff6633'
-                         progressColor='#88cc33'
-                         progressHeight={4}
-                         thumbSize={20}
-                         thumbColor='#88cc33'
-                         thumbColorPressed='#ff9933'
-                         onProgressChanged={(progress) => this.onProgressChanged(progress)}
-                />
-
-                <SeekBar style={{margin: 20, padding: 40, backgroundColor:'red'}}
-                         progressBackgroundColor='#ff6633'
-                         progressColor='#88cc33'
+                <SeekBar style={{margin: 20, padding: 20, backgroundColor:'black'}}
+                         min={0}
+                         max={100}
+                         progress={this.state.value}
                          progressHeight={4}
                          thumbSize={40}
+                         progressBackgroundColor='#663300'
+                         progressColor='#88cc33'
                          thumbColor='#88cc33'
-                         thumbColorPressed='#ff9933'
+                         thumbColorPressed='#ff6633'
                          onProgressChanged={(progress) => this.onProgressChanged(progress)}
                 />
 

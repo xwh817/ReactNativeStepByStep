@@ -11,8 +11,14 @@
 * 体验FlatListView
 * 体验FlexLayout
 
+<img src="./screenShot/home.png" width="300">
+
 ### React Navigation 路由导航
 遇到的坑！版本更新快，网上的例子函数名字和结构都是以前的，跑不起来。
-
 得看[英文最新文档](https://reactnavigation.org/docs/en/hello-react-navigation.html)，具体参数[API参考](https://reactnavigation.org/docs/en/navigation-prop.html)。
+
 ### React-native 视频播放
+<img src="./screenShot/videoPlayer.gif">
+
+### 自定义SeekBar
+<img src="./screenShot/seekBar.gif">

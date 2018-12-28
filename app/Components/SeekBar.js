@@ -4,9 +4,10 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native'
 
 export default class SeekBar extends Component {
 
-    progressWidth = 0;
+    containerWidth = 0;
+    containerLeft = 0;
     progressLeft = 0;
-    isPressed = false;
+    progressRight = 0;
     min = 0;
     max = 100;
     value = 50;
@@ -28,21 +29,18 @@ export default class SeekBar extends Component {
 
     state = {
         progressPosition: 0,    // 当前进度的位置（界面位置）
+        thumbColor: this.defaultProgressColor,
+        isPressed: false,
     };
 
     constructor(props) {
         super(props);
 
-        let progressHeight = props.progressHeight !== undefined ? props.progressHeight : this.defaultProgressHeight;
-        this.thumbSize = props.thumbSize !== undefined ? props.thumbSize : this.defaultProgressHeight * 4;
+        let progressHeight = props.progressHeight || this.defaultProgressHeight;
+        this.thumbSize = props.thumbSize || this.defaultProgressHeight * 4;
         let containerHeight = Math.max(progressHeight, this.thumbSize) * 2;
-
-        if (props.min != undefined) {
-            this.min = props.min;
-        }
-        if (props.max != undefined) {
-            this.max = props.max;
-        }
+        this.min = props.min || 0;
+        this.max = props.max || 100;
 
         // 外部style覆盖内部默认style
         this.styles = StyleSheet.create({
@@ -56,17 +54,17 @@ export default class SeekBar extends Component {
                 height: progressHeight,
                 borderRadius: progressHeight / 2,
                 overflow: 'hidden',
-                backgroundColor: props.progressBackgroundColor !== undefined ? props.progressBackgroundColor : '#2C2C2C',
+                backgroundColor: props.progressBackgroundColor || '#2C2C2C',
             },
             innerProgressCompleted: {
                 height: progressHeight,
-                backgroundColor: props.progressColor !== undefined ? props.progressColor : '#cccccc',
+                backgroundColor: props.progressColor || '#cccccc',
             },
             progressThumb: {
                 width: this.thumbSize,
                 height: this.thumbSize,
                 position: 'absolute',
-                backgroundColor: props.thumbColor !== undefined ? props.thumbColor : this.defaultProgressColor,
+                backgroundColor: props.thumbColor || this.defaultProgressColor,
                 borderStyle: 'solid',
                 borderRadius: this.thumbSize / 2,
             },
@@ -75,16 +73,23 @@ export default class SeekBar extends Component {
     }
 
     render() {
+
+        // 外部指定了progress就更新
         if (this.props.progress != undefined) {
-            this.setProgress(this.props.progress);
+            this.value = this.props.progress;
+            this.state.progressPosition = this.getPositionFromValue();
         }
+
+        if (this.props.max != undefined) {
+            this.max = this.props.max;
+        }
+
         return (
             <View style={[this.styles.container, this.props.style]}
                   onLayout={(e) => {
-                      this.progressWidth = e.nativeEvent.layout.width;
-                      this.progressLeft = e.nativeEvent.layout.x;
-                      this.setProgress(this.value);
-                      console.log("获取宽度：" + this.progressWidth + ", 位置：" + this.progressLeft);
+                      this.containerWidth = e.nativeEvent.layout.width;
+                      this.containerLeft = e.nativeEvent.layout.x;
+                      console.log("获取容器宽度：" + this.containerWidth + ", 位置：" + this.containerLeft);
                   }}
 
                   onStartShouldSetResponder={() => true}
@@ -94,11 +99,18 @@ export default class SeekBar extends Component {
                   onResponderEnd={(event) => this.onPressEnd(event)}
             >
 
-                <View style={this.styles.progressBackground}>
+                <View style={this.styles.progressBackground}
+                      onLayout={(e) => {
+                          this.progressLeft = e.nativeEvent.layout.x;
+                          this.progressRight = this.progressLeft + e.nativeEvent.layout.width;
+                          console.log("获取进度条位置：" + this.progressLeft + ", " + this.progressRight);
+                          this.setProgress(this.value);
+                      }}
+                >
                     <View style={[this.styles.innerProgressCompleted,
                         {
-                            width: this.state.progressPosition,
-                            backgroundColor: this.props.progressColor == undefined ? this.styles.innerProgressCompleted.backgroundColor : this.props.progressColor
+                            width: this.state.progressPosition - this.progressLeft,
+                            backgroundColor: this.props.progressColor || this.styles.innerProgressCompleted.backgroundColor
                         }
                     ]}/>
                     {/*如果还要加其他进度条，在这儿加*/}
@@ -106,8 +118,7 @@ export default class SeekBar extends Component {
 
                 <View style={[this.styles.progressThumb,
                     {
-                        //left: this.styles.container.padding + (this.progressWidth - this.styles.container.padding * 2) * this.state.progressPosition / this.progressWidth - this.thumbSize / 2,
-                        left: this.state.progressPosition,
+                        left: this.state.progressPosition - this.thumbSize / 2 ,
                         backgroundColor: this.getThumbColor(),
                     }]}
                 />
@@ -115,68 +126,120 @@ export default class SeekBar extends Component {
         );
     }
 
+    componentWillMount(): void {
+        console.log("componentWillMount");
+    }
+
+    componentDidMount(): void {
+        console.log("componentDidMount, value:" + this.value);
+    }
+
+    componentWillUpdate(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): void {
+    }
+
+    componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS): void {
+        console.log("componentDidUpdate");
+    }
+
+
     getThumbColor() {
         let color = this.defaultProgressColor;
-        if (this.isPressed) {
-            if (this.props.thumbColorPressed !== undefined) {
-                color = this.props.thumbColorPressed;
-            }
+        if (this.state.isPressed) {
+            color = this.props.thumbColorPressed || color;
         } else {
-            if (this.props.thumbColor !== undefined) {
-                color = this.props.thumbColor;
-            }
+            color = this.props.thumbColor || color;
         }
         return color;
     }
 
 
+    /**
+     * 把对外的value值转成界面对应的位置。
+     * @param value
+     */
     setProgress(value) {
-        if (this.value != value) {
-            this.value = value;
+        this.value = value;
+        let position = this.getPositionFromValue();
+        this.updatePosition(position, false);
+    }
+
+    getPositionFromValue() {
+        let position = this.progressLeft + (this.progressRight - this.progressLeft) * (this.value - this.min) / (this.max - this.min);
+        return position;
+    }
+
+    getPositionFromEvent(event) {
+        let mX = event.nativeEvent.pageX;   // 相对于父组件位置
+        let position = mX - this.containerLeft;  // 计算在组件内的位置
+        let position2 = event.nativeEvent.locationX; // 超出范围时会突然变很小，Bug
+        console.log("getPositionFromEvent:" + mX + ", " + position + ", " + position2);
+        return position;
+    }
+
+    updatePosition(position, fromUser = true) {
+        console.log("updatePosition: " + position);
+        let newValue = 0;
+        if (position < this.progressLeft) {
+            position = this.progressLeft;
+            newValue = this.min;
+        } else if (position > this.progressRight) {
+            position = this.progressRight;
+            newValue = this.max;
+        } else {
+            newValue = this.min + (this.max - this.min) * position / this.containerWidth;
+        }
+
+        if (this.value != newValue) {
+            this.value = newValue;
+
             this.setState(
                 {
-                    progressPosition: this.progressWidth * (this.value - this.min) / (this.max - this.min),
+                    progressPosition: position,
                 }
             )
+
+            // 用户手动拖动才触发监听
+            if (fromUser && this.props.onProgressChanged !== undefined) {
+                this.props.onProgressChanged(this.value)
+            }
         }
     }
 
 
     onGrant(event) {
-        this.isPressed = true;
-        this.onMoving(event);
         console.log("onGrant");
+        let position = this.getPositionFromEvent(event);
+        this.updatePosition(position);
+        this.setState(
+            {
+                isPressed: true,
+            }
+        )
+
+        if (this.props.onStartTouch !== undefined) {
+            this.props.onStartTouch(this.value)
+        }
+
     }
 
     onMoving(event) {
-        let mX = event.nativeEvent.pageX;   // 相对于父组件位置
-        let left = mX - this.progressLeft;  // 计算在组件内的位置
-        //let left = event.nativeEvent.locationX; // 超出范围时会突然变很小，Bug
-        console.log("onMoving:" + left);
-        if (left < 0) {
-            left = 0;
-        } else if (left > this.progressWidth) {
-            left = this.progressWidth;
-        }
-
-        let newValue = this.min + (this.max - this.min) * left / this.progressWidth;
-        if (this.value != newValue) {
-            this.setState({
-                progressPosition: left,
-            })
-
-            this.value = newValue;
-
-            if (this.props.onProgressChanged !== undefined) {
-                this.props.onProgressChanged(this.value, true)
-            }
-        }
+        let position = this.getPositionFromEvent(event);
+        this.updatePosition(position);
     }
 
     onPressEnd(event) {
         console.log("onPressEnd");
-        this.isPressed = false;
-        this.onMoving(event);
+        let position = this.getPositionFromEvent(event);
+        this.updatePosition(position);
+        this.setState(
+            {
+                isPressed: false,
+            }
+        )
+
+        if (this.props.onStopTouch !== undefined) {
+            this.props.onStopTouch(this.value)
+        }
     }
 
 }
