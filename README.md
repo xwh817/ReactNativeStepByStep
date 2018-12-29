@@ -11,7 +11,7 @@
 * 体验FlatListView
 * 体验FlexLayout
 
-<img src="./screenShot/home.png" width="300">
+<img src="./screenShot/home.png" width="400">
 
 ### React Navigation 路由导航
 遇到的坑！版本更新快，网上的例子函数名字和结构都是以前的，跑不起来。
