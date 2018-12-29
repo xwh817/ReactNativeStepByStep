@@ -23,6 +23,16 @@ export default class MyComponents extends Component {
                 <SeekBar ref='seekBar1'
                     onProgressChanged={(progress) => this.onProgressChanged(progress)}
                     progress={this.state.value}
+                    thumbSize={0}
+                />
+
+                <SeekBar style={{width:200, marginTop:20, alignSelf:'center'}}
+                         onProgressChanged={(progress) => this.onProgressChanged(progress)}
+                         progress={this.state.value}
+                         progressBackgroundColor='#663300'
+                         progressColor='#ff6633'
+                         thumbColor='#88cc33'
+                         thumbColorPressed='#ff6633'
                 />
 
                 <SeekBar style={{margin: 20, padding: 20, backgroundColor: 'black'}}
@@ -35,7 +45,9 @@ export default class MyComponents extends Component {
                          progressColor='#88cc33'
                          thumbColor='#88cc33'
                          thumbColorPressed='#ff6633'
+                         onStartTouch={() => {console.log('onStartTouch')}}
                          onProgressChanged={(progress) => this.onProgressChanged(progress)}
+                         onStopTouch={() => {console.log('onStopTouch')}}
                 />
 
             </View>

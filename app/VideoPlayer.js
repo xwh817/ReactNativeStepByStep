@@ -101,9 +101,7 @@ export default class VideoPlayer extends Component {
                 currentTime: newTime,
             });
         }
-
     }
-
 
     onBuffer() {
         console.log("onBuffer");
@@ -165,12 +163,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         flexDirection: 'row',
     },
-    btnStyle: {
-        paddingRight: 10,
-        paddingTop: 25,
-        justifyContent: 'flex-end',
-        flexDirection: 'row',
-    },
     controls: {
         flex: 1,
         backgroundColor: 'transparent',
@@ -181,28 +173,9 @@ const styles = StyleSheet.create({
         left: 20,
         right: 20,
     },
-    rateControl: {
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
     timeText: {
         fontSize: 14,
         color: '#fff',
         justifyContent: 'center',
-    },
-    resizeModeControl: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    controlOption: {
-        alignSelf: 'center',
-        fontSize: 11,
-        color: 'white',
-        paddingLeft: 2,
-        paddingRight: 2,
-        lineHeight: 12,
     },
 });

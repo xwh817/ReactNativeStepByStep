@@ -1,10 +1,7 @@
 import React, {Component} from 'react'
-import {StyleSheet, TouchableOpacity, View} from 'react-native'
-
+import {StyleSheet, View} from 'react-native'
 
 export default class SeekBar extends Component {
-
-    containerWidth = 0;
     containerLeft = 0;
     progressLeft = 0;
     progressRight = 0;
@@ -14,7 +11,7 @@ export default class SeekBar extends Component {
         progressHeight: 4,
         progressBackgroundColor: '#666666',
         progressColor: '#cccccc',
-        thumbSize: 12,
+        thumbSize: 12,      // thumbSize为0则进度条不可拖动
         thumbColor: '#dddddd',
         thumbColorPressed: '#eeeeee',
         min: 0,
@@ -73,14 +70,13 @@ export default class SeekBar extends Component {
         return (
             <View style={[this.styles.container, this.props.style]}
                   onLayout={(e) => {
-                      this.containerWidth = e.nativeEvent.layout.width;
                       this.containerLeft = e.nativeEvent.layout.x;
-                      console.log("获取容器宽度：" + this.containerWidth + ", 位置：" + this.containerLeft);
+                      console.log("获取容器位置：" + this.containerLeft);
                       this.setProgress(this.state.value);
                   }}
 
-                  onStartShouldSetResponder={() => true}
-                  onMoveShouldSetResponder={() => true}
+                  onStartShouldSetResponder={() => this.props.thumbSize > 0}
+                  onMoveShouldSetResponder={() => this.props.thumbSize > 0}
                   onResponderGrant={(event) => this.onGrant(event)}
                   onResponderMove={(event) => this.onMoving(event)}
                   onResponderEnd={(event) => this.onPressEnd(event)}
@@ -165,7 +161,7 @@ export default class SeekBar extends Component {
     getPositionFromEvent(event) {
         let mX = event.nativeEvent.pageX;   // 相对于父组件位置
         let position = mX - this.containerLeft;  // 计算在组件内的位置
-        let position2 = event.nativeEvent.locationX; // 超出范围时会突然变很小，Bug??
+        //let position2 = event.nativeEvent.locationX; // 超出范围时会突然变很小，Bug??
         //console.log("getPositionFromEvent:" + mX + ", " + position + ", " + position2);
         return position;
     }

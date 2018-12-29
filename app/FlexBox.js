@@ -17,11 +17,13 @@ export default class FlexBoxLayout extends Component {
                 {/*
                 flexDirection可以决定布局的主轴。
                 子元素是应该沿着水平轴(row)方向排列，还是沿着竖直轴(column)方向排列呢？
-                默认值是竖直轴(column)方向。*/}
+                默认值是竖直轴(column)方向。
+                alignSelf  元素在容器内的对齐方式，auto默认值元素继承了它的父容器的 align-items 属性。如果没有父容器则为 "stretch"。
+                */}
                 <View style={{padding: 10}}>
                     <View style={{height: 60, backgroundColor: this.state.color1}}/>
                     <View style={{height: 60, backgroundColor: this.state.color2}}/>
-                    <View style={{width: 120, height: 60, backgroundColor: this.state.color3}}/>
+                    <View style={{width: 120, height: 60, alignSelf:'center', backgroundColor: this.state.color3}}/>
                 </View>
 
                 {/*justifyContent可以决定其子元素沿着主轴的排列方式。
