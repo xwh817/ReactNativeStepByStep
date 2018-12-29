@@ -20,12 +20,12 @@ export default class MyComponents extends Component {
                     fontWeight: 'bold',
                 }}>{this.state.value}</Text>
 
-                <SeekBar
-                         onProgressChanged={(progress) => this.onProgressChanged(progress)}
-                         progress={this.state.value}
+                <SeekBar ref='seekBar1'
+                    onProgressChanged={(progress) => this.onProgressChanged(progress)}
+                    progress={this.state.value}
                 />
 
-                <SeekBar style={{margin: 20, padding: 20, backgroundColor:'black'}}
+                <SeekBar style={{margin: 20, padding: 20, backgroundColor: 'black'}}
                          min={0}
                          max={100}
                          progress={this.state.value}
@@ -48,5 +48,7 @@ export default class MyComponents extends Component {
                 value: Math.round(progress),
             }
         )
+
+        //this.refs.seekBar1.setProgress(progress);
     }
 }

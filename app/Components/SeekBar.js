@@ -8,18 +8,18 @@ export default class SeekBar extends Component {
     containerLeft = 0;
     progressLeft = 0;
     progressRight = 0;
-    min = 0;
-    max = 100;
-    value = 50;
-
-    defaultProgressColor = '#dddddd';
-    defaultProgressHeight = 6;
-    thumbSize;
 
     // 默认props
     static defaultProps = {
-        /*max: 100,
-        value: 50,*/
+        progressHeight: 4,
+        progressBackgroundColor: '#666666',
+        progressColor: '#cccccc',
+        thumbSize: 12,
+        thumbColor: '#dddddd',
+        thumbColorPressed: '#eeeeee',
+        min: 0,
+        max: 100,
+        progress: 0,    // 初始值
     }
 
     // propTypes用于验证转入的props，当向 props 传入无效数据时，JavaScript 控制台会抛出警告
@@ -27,69 +27,56 @@ export default class SeekBar extends Component {
          value: React.PropTypes.number.isRequired,
      }*/
 
-    state = {
-        progressPosition: 0,    // 当前进度的位置（界面位置）
-        thumbColor: this.defaultProgressColor,
-        isPressed: false,
-    };
-
     constructor(props) {
         super(props);
+        // 初始化state
+        this.state = {
+            value: this.props.progress,
+            progressPosition: this.getPositionFromValue(this.props.progress),    // 当前进度的位置（界面位置）
+            isPressed: false,
+        };
 
-        let progressHeight = props.progressHeight || this.defaultProgressHeight;
-        this.thumbSize = props.thumbSize || this.defaultProgressHeight * 4;
-        let containerHeight = Math.max(progressHeight, this.thumbSize) * 2;
-        this.min = props.min || 0;
-        this.max = props.max || 100;
+
+        let containerHeight = Math.max(this.props.progressHeight, this.props.thumbSize) * 2;
 
         // 外部style覆盖内部默认style
         this.styles = StyleSheet.create({
             container: {
                 height: containerHeight,
-                padding: progressHeight,
+                padding: this.props.progressHeight,
                 justifyContent: 'center',
                 backgroundColor: 'transparent',
             },
             progressBackground: {
-                height: progressHeight,
-                borderRadius: progressHeight / 2,
+                height: this.props.progressHeight,
+                borderRadius: this.props.progressHeight / 2,
                 overflow: 'hidden',
-                backgroundColor: props.progressBackgroundColor || '#2C2C2C',
+                backgroundColor: this.props.progressBackgroundColor,
             },
             innerProgressCompleted: {
-                height: progressHeight,
-                backgroundColor: props.progressColor || '#cccccc',
+                height: this.props.progressHeight,
+                backgroundColor: this.props.progressColor,
             },
             progressThumb: {
-                width: this.thumbSize,
-                height: this.thumbSize,
+                width: this.props.thumbSize,
+                height: this.props.thumbSize,
                 position: 'absolute',
-                backgroundColor: props.thumbColor || this.defaultProgressColor,
+                backgroundColor: this.props.thumbColor,
                 borderStyle: 'solid',
-                borderRadius: this.thumbSize / 2,
+                borderRadius: this.props.thumbSize / 2,
             },
 
         })
     }
 
     render() {
-
-        // 外部指定了progress就更新
-        if (this.props.progress != undefined) {
-            this.value = this.props.progress;
-            this.state.progressPosition = this.getPositionFromValue();
-        }
-
-        if (this.props.max != undefined) {
-            this.max = this.props.max;
-        }
-
         return (
             <View style={[this.styles.container, this.props.style]}
                   onLayout={(e) => {
                       this.containerWidth = e.nativeEvent.layout.width;
                       this.containerLeft = e.nativeEvent.layout.x;
                       console.log("获取容器宽度：" + this.containerWidth + ", 位置：" + this.containerLeft);
+                      this.setProgress(this.state.value);
                   }}
 
                   onStartShouldSetResponder={() => true}
@@ -104,7 +91,6 @@ export default class SeekBar extends Component {
                           this.progressLeft = e.nativeEvent.layout.x;
                           this.progressRight = this.progressLeft + e.nativeEvent.layout.width;
                           console.log("获取进度条位置：" + this.progressLeft + ", " + this.progressRight);
-                          this.setProgress(this.value);
                       }}
                 >
                     <View style={[this.styles.innerProgressCompleted,
@@ -118,12 +104,25 @@ export default class SeekBar extends Component {
 
                 <View style={[this.styles.progressThumb,
                     {
-                        left: this.state.progressPosition - this.thumbSize / 2 ,
-                        backgroundColor: this.getThumbColor(),
+                        left: this.state.progressPosition - this.props.thumbSize / 2,
+                        backgroundColor: this.state.isPressed ? this.props.thumbColorPressed : this.props.thumbColor,
                     }]}
                 />
             </View>
         );
+    }
+
+    /**
+     * props被传递给组件实例时被调用
+     * 判断如果父组件传过来的props发生了变化，就setState更新子组件
+     * 这里setState不会再次触发render()
+     */
+    componentWillReceiveProps(nextProps: Readonly<P>, nextContext: any): void {
+        if (!this.state.isPressed &&    // 如果自己再拖动过程中，就不要刷新自己，不然会抖动
+            nextProps.progress != undefined && nextProps.progress != this.props.progress) {
+            //console.log("nextProps.progress changed:" + nextProps.progress);
+            this.setProgress(nextProps.progress);
+        }
     }
 
     componentWillMount(): void {
@@ -131,85 +130,87 @@ export default class SeekBar extends Component {
     }
 
     componentDidMount(): void {
-        console.log("componentDidMount, value:" + this.value);
+        console.log("componentDidMount, value:" + this.state.value);
     }
 
     componentWillUpdate(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): void {
     }
 
     componentDidUpdate(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot: SS): void {
-        console.log("componentDidUpdate");
+        //console.log("componentDidUpdate");
     }
-
-
-    getThumbColor() {
-        let color = this.defaultProgressColor;
-        if (this.state.isPressed) {
-            color = this.props.thumbColorPressed || color;
-        } else {
-            color = this.props.thumbColor || color;
-        }
-        return color;
-    }
-
 
     /**
      * 把对外的value值转成界面对应的位置。
      * @param value
      */
     setProgress(value) {
-        this.value = value;
-        let position = this.getPositionFromValue();
-        this.updatePosition(position, false);
+        if (value < this.props.min) {
+            value = this.props.min;
+        } else if (value > this.props.max) {
+            value = this.props.max;
+        }
+        let position = this.getPositionFromValue(value);
+        this.updatePosition(position);
     }
 
-    getPositionFromValue() {
-        let position = this.progressLeft + (this.progressRight - this.progressLeft) * (this.value - this.min) / (this.max - this.min);
+    getPositionFromValue(value) {
+        if (this.props.max <= this.props.min) { // 防止传入不合法的值。
+            return 0;
+        }
+        let position = this.progressLeft + (this.progressRight - this.progressLeft) * (value - this.props.min) / (this.props.max - this.props.min);
         return position;
     }
 
     getPositionFromEvent(event) {
         let mX = event.nativeEvent.pageX;   // 相对于父组件位置
         let position = mX - this.containerLeft;  // 计算在组件内的位置
-        let position2 = event.nativeEvent.locationX; // 超出范围时会突然变很小，Bug
-        console.log("getPositionFromEvent:" + mX + ", " + position + ", " + position2);
+        let position2 = event.nativeEvent.locationX; // 超出范围时会突然变很小，Bug??
+        //console.log("getPositionFromEvent:" + mX + ", " + position + ", " + position2);
         return position;
     }
 
-    updatePosition(position, fromUser = true) {
+    /**
+     *  刷新进度条位置
+     * @param position  新的位置
+     * @param fromUser  是否是用户手动更新，自动刷新不通知监听器，以免事件死循环。
+     */
+    updatePosition(position, fromUser = false) {
         console.log("updatePosition: " + position);
-        let newValue = 0;
+        let newValue;
         if (position < this.progressLeft) {
             position = this.progressLeft;
-            newValue = this.min;
+            newValue = this.props.min;
         } else if (position > this.progressRight) {
             position = this.progressRight;
-            newValue = this.max;
+            newValue = this.props.max;
         } else {
-            newValue = this.min + (this.max - this.min) * position / this.containerWidth;
+            // 去除两边间距，按比例计算出对应值
+            newValue = this.props.min + (this.props.max - this.props.min) * (position - this.progressLeft) / (this.progressRight - this.progressLeft);
         }
 
-        if (this.value != newValue) {
-            this.value = newValue;
+        /*newValue = Math.round(newValue);
+        position = Math.round(position);*/
 
-            this.setState(
-                {
-                    progressPosition: position,
-                }
-            )
-
-            // 用户手动拖动才触发监听
-            if (fromUser && this.props.onProgressChanged !== undefined) {
-                this.props.onProgressChanged(this.value)
+        this.setState(
+            {
+                value: newValue,
+                progressPosition: position,
             }
+        )
+
+        // 用户手动拖动才触发监听
+        if (fromUser && this.props.onProgressChanged !== undefined) {
+            this.props.onProgressChanged(newValue)
         }
+
     }
 
 
     onGrant(event) {
         console.log("onGrant");
         let position = this.getPositionFromEvent(event);
-        this.updatePosition(position);
+        this.updatePosition(position, true);
         this.setState(
             {
                 isPressed: true,
@@ -217,20 +218,20 @@ export default class SeekBar extends Component {
         )
 
         if (this.props.onStartTouch !== undefined) {
-            this.props.onStartTouch(this.value)
+            this.props.onStartTouch(this.state.value)
         }
 
     }
 
     onMoving(event) {
         let position = this.getPositionFromEvent(event);
-        this.updatePosition(position);
+        this.updatePosition(position, true);
     }
 
     onPressEnd(event) {
         console.log("onPressEnd");
         let position = this.getPositionFromEvent(event);
-        this.updatePosition(position);
+        this.updatePosition(position, true);
         this.setState(
             {
                 isPressed: false,
@@ -238,7 +239,7 @@ export default class SeekBar extends Component {
         )
 
         if (this.props.onStopTouch !== undefined) {
-            this.props.onStopTouch(this.value)
+            this.props.onStopTouch(this.state.value)
         }
     }
 

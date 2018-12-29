@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Image} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Video from 'react-native-video';
 import StringUtil from './Utils/StringUtil'
 import SeekBar from './Components/SeekBar'
@@ -27,6 +27,7 @@ export default class VideoPlayer extends Component {
 
 
     render() {
+        console.log("render()");
         return (
             <View style={styles.container}>
                 <Video source={{uri: videoUrl}}   // Can be a URL or a local file.
@@ -55,7 +56,7 @@ export default class VideoPlayer extends Component {
                     }}>
                         <Image
                             source={this.state.paused ? require('./images/ic_play.png') : require('./images/ic_pause.png')}
-                            style={{width: 40, height: 40, marginRight:6}}/>
+                            style={{width: 40, height: 40, marginRight: 6}}/>
                     </TouchableOpacity>
 
 
@@ -63,26 +64,20 @@ export default class VideoPlayer extends Component {
                         {StringUtil.formatTime(this.state.currentTime)}
                     </Text>
 
-                    <SeekBar style={{flex:1, padding: 10}}
+                    <SeekBar style={{flex: 1, padding: 10}}
                              max={this.state.duration}
-                             progress={this.state.currentTime}
+                             progress={Math.round(this.state.currentTime)}
                              progressBackgroundColor='#2C2C2C'
                              progressColor='#88cc33'
                              progressHeight={2}
                              thumbSize={10}
                              thumbColor='#88cc33'
                              thumbColorPressed='#f4511e'
-                             onStartTouch={() => {
-                                 this.isPressed = true;
-                             }}
-                             onProgressChanged={(progress) => this.setState({
-                                 currentTime: progress,
-                             })}
+                             onStartTouch={() => {this.isPressed = true;}}
+                             onProgressChanged={(progress) => this.setCurrentTime(progress)}
                              onStopTouch={(progress) => {
                                  this.isPressed = false;
-                                 this.setState({
-                                     currentTime: progress,
-                                 });
+                                 this.setCurrentTime(progress);
                                  this.player.seek(progress);
                              }}
                     />
@@ -95,6 +90,17 @@ export default class VideoPlayer extends Component {
 
             </View>
         );
+
+    }
+
+    setCurrentTime(progress) {
+        let currentTime = Math.round(this.state.currentTime);
+        let newTime = Math.round(progress);
+        if (currentTime != newTime) {   // 用整数比较，减少刷新次数
+            this.setState({
+                currentTime: newTime,
+            });
+        }
 
     }
 
@@ -114,9 +120,10 @@ export default class VideoPlayer extends Component {
 
     onProgress = (data) => {
         if (!this.isPressed) {
-            this.setState({
-                currentTime: data.currentTime,
-            });
+            // 尽量不要自己去更新DOM
+            //this.refs.seekBar.setProgress(Math.round(data.currentTime));
+
+            this.setCurrentTime(data.currentTime);
             console.log("onProgress: " + data.currentTime);
         }
     };
