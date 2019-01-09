@@ -13,6 +13,7 @@ export default class Home extends Component {
                 <Button text='VideoPlayer' onPress={() => this.props.navigation.navigate('Video')}/>
                 <Button text='PanResponder手势响应' onPress={() => this.props.navigation.navigate('PanResponder')}/>
                 <Button text='自定义组件' onPress={() => this.props.navigation.navigate('MyComponents')}/>
+                <Button text='动画' onPress={() => this.props.navigation.navigate('Animations')}/>
             </View>
         );
     }

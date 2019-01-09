@@ -6,6 +6,7 @@ import FlatListView from './Components/FlatListView';
 import VideoPlayer from './VideoPlayer';
 import PanResponder from './PanResponder';
 import MyComponents from './MyComponents';
+import Animations from './Animations'
 
 const rootNavigatior = createStackNavigator(
     {
@@ -51,7 +52,13 @@ const rootNavigatior = createStackNavigator(
             navigationOptions: {
                 headerTitle: 'MyComponents',
             }
-        }
+        },
+        Animations: {
+            screen: Animations,
+            navigationOptions: {
+                headerTitle: 'Animations',
+            }
+        },
     },
     {
         initialRouteName: 'Home',
