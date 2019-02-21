@@ -5,15 +5,16 @@ import PanResponder from "./PanResponder";
 
 export default class Home extends Component {
     render() {
+        let {navigate} = this.props.navigation;
         return (
             <View style={styles.container}>
-                <Button text='Hello React-Native' onPress={() => this.props.navigation.navigate('Hello')}/>
-                <Button text='FlatListView' onPress={() => this.props.navigation.navigate('ListView')}/>
-                <Button text='FlexLayout' onPress={() => this.props.navigation.navigate('Flex')}/>
-                <Button text='VideoPlayer' onPress={() => this.props.navigation.navigate('Video')}/>
-                <Button text='PanResponder手势响应' onPress={() => this.props.navigation.navigate('PanResponder')}/>
-                <Button text='自定义组件' onPress={() => this.props.navigation.navigate('MyComponents')}/>
-                <Button text='动画' onPress={() => this.props.navigation.navigate('Animations')}/>
+                <Button text='Hello React-Native' onPress={() => navigate('Hello', {name:'xwh123'})}/>
+                <Button text='FlatListView' onPress={() => navigate('ListView')}/>
+                <Button text='FlexLayout' onPress={() => navigate('Flex')}/>
+                <Button text='VideoPlayer' onPress={() => navigate('Video')}/>
+                <Button text='PanResponder手势响应' onPress={() => navigate('PanResponder')}/>
+                <Button text='自定义组件' onPress={() => navigate('MyComponents')}/>
+                <Button text='动画' onPress={() => navigate('Animations')}/>
             </View>
         );
     }

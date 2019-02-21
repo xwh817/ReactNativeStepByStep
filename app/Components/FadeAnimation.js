@@ -60,7 +60,7 @@ export default class FadeAnimation extends Component {
                 style={{
                     ...this.props.style,
                     opacity: animFade,         // 将透明度指定为动画变量值
-                    marginTop: this.state.animType,
+                    marginTop: this.state.animType,     // 位置为对应的动画插值器返回值
                 }}
             >
                 {this.props.children}

@@ -16,20 +16,20 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
-type Props = {};
 
-
-const hello = 'Hello React-native, I\'m xwh ';
-
-
-export default class Hello extends Component<Props> {
+export default class Hello extends Component {
   render() {
+
+    const { navigation } = this.props;  // 从导航中取数据
+    const userName = navigation.getParam('name', 'unknown');
+    const hello = 'Hello React-native, I\'m ';
+
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Welcome to React Native!</Text>
         <Text style={styles.instructions}>To get started, edit App.js</Text>
         <Text style={styles.instructions}>{instructions}</Text>
-        <Text style={styles.myStyle}>{hello}</Text>
+        <Text style={styles.myStyle}>{hello + userName}</Text>
       </View>
     );
   }
