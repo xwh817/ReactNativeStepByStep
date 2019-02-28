@@ -1,7 +1,10 @@
+import {Platform} from 'react-native'
 import {createStackNavigator, createAppContainer} from 'react-navigation';
 import Hello from './Hello';
 import Home from './Home';
 import FlexBoxLayout from './FlexBox';
+import TabNavigator from './TabNavigator';
+import DrawerNavigator from './DrawerNavigator';
 import FlatListView from './Components/FlatListView';
 import VideoPlayer from './VideoPlayer';
 import PanResponder from './PanResponder';
@@ -18,53 +21,46 @@ const rootNavigatior = createStackNavigator(
         },
         Hello: {
             screen: Hello,
-            navigationOptions: {
-                headerTitle: 'Hello',
-            }
+            navigationOptions: ({navigation}) => ({ // 从导航对象中动态设置
+                headerTitle: `Hello from ${navigation.state.params.name}`,
+            })
         },
         ListView: {
             screen: FlatListView,
-            navigationOptions: {
-                headerTitle: 'ListView',
-            }
         },
         Flex: {
             screen: FlexBoxLayout,
+        },
+        TabNavigator: {
+            screen: TabNavigator,
+        },
+        DrawerNavigator: {
+            screen: DrawerNavigator,
             navigationOptions: {
-                headerTitle: 'FlexBoxLayout',
+                header: null,
             }
         },
         Video: {
             screen: VideoPlayer,
             navigationOptions: {
-                headerTitle: 'react-native-video',
-                header:null,
+                title: 'react-native-video',
             }
         },
         PanResponder: {
             screen: PanResponder,
-            navigationOptions: {
-                headerTitle: 'PanResponder手势响应',
-            }
         },
         MyComponents: {
             screen: MyComponents,
-            navigationOptions: {
-                headerTitle: 'MyComponents',
-            }
         },
         Animations: {
             screen: Animations,
-            navigationOptions: {
-                headerTitle: 'Animations',
-            }
         },
     },
     {
         initialRouteName: 'Home',
         /* 自定义公用属性 */
-        defaultNavigationOptions: {
-            //header:null,
+        defaultNavigationOptions: ({navigation}) => ({
+            title: navigation.state.routeName,
             headerStyle: {
                 backgroundColor: '#e4511e',
                 height: 52
@@ -74,7 +70,7 @@ const rootNavigatior = createStackNavigator(
                 fontWeight: 'bold',
                 fontSize: 18,
             },
-        },
+        }),
     }
 );
 
