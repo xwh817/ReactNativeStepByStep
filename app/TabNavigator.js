@@ -3,7 +3,7 @@ import React from 'react'
 import {Text} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Home from './Home';
+import Hello from './Hello';
 import FlexBoxLayout from './FlexBox';
 import FlatListView from './Components/FlatListView';
 
@@ -16,7 +16,7 @@ const iconSize = 30;
  */
 const BottomTabNavigator = createBottomTabNavigator({
     Home: {
-        screen: Home,
+        screen: Hello,
         navigationOptions: ({navigation}) => ({
             tabBarLabel:'Home',
             tabBarIcon: ({focused, tintColor}) => (

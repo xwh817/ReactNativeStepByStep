@@ -3,24 +3,24 @@ import React from 'react'
 import {ScrollView, SafeAreaView} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Home from './Hello';
+import Hello from './Hello';
 import FlexBoxLayout from './FlexBox';
 import FlatListView from './Components/FlatListView';
 
 const iconSize = 30;
 
-// 自定义侧边栏
+// 自定义侧边栏， 在配置中赋给contentComponent属性。默认采用navigationOptions中的item配置进行显示
 const CustomDrawerContentComponent = (props) => (
     <ScrollView>
-        <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
-            <DrawItems {...props}/>
+        <SafeAreaView style={{backgroundColor:'green'}} forceInset={{ top: 'always', horizontal: 'never' }}>
+            {/* 自定义内容 */}
         </SafeAreaView>
     </ScrollView>
 );
 
 export default drawerNavigator = createDrawerNavigator({
     Home: {
-        screen: Home,
+        screen: Hello,
         navigationOptions: {
             drawerLable:'Home',
             drawerIcon: ({tintColor}) => (
