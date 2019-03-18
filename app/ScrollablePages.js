@@ -18,9 +18,9 @@ export default class ScrollablePages extends Component {
             tabBarTextStyle={styles.tabBarText}
             tabBarUnderlineStyle={styles.tabBarUnderline}
           >
-            <Hello tabLabel='Hello' key='1' navigation={this.props.navigation}/>
+            <Hello tabLabel='Hello' key='1'/>
             <FlatListView tabLabel='FlatList' key='2'/>
-            <FlexBoxLayout tabLabel='Flex' key='3'/>    {/* label千万不要写成lable了，踩坑 */}
+            <FlexBoxLayout tabLabel='Flex' key='3'/>
           </ScrollableTabView>
         );
       }

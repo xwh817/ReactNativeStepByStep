@@ -8,6 +8,7 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
+import StorageUtil from './Utils/StorageUtil'
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -18,10 +19,34 @@ const instructions = Platform.select({
 
 
 export default class Hello extends Component {
-  render() {
+
+
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      userName:"",
+    }
 
     const { navigation } = this.props;  // 从导航中取数据
-    const userName = navigation && navigation.getParam('name', 'unknown');
+    if (navigation) {
+      let name = navigation.getParam('name', 'xwh');
+      StorageUtil.put('userName', name);
+      this.state.userName = name;
+    } else {
+      StorageUtil.get('userName').then(value =>{
+        this.setState({
+          userName:value,
+        });
+        //this.state.userName = value;  // 异步的，这个地方直接赋值会失败
+      });
+    }
+
+  }
+
+
+  render() {
+
     const hello = 'Hello React-native, I\'m ';
 
     return (
@@ -29,7 +54,7 @@ export default class Hello extends Component {
         <Text style={styles.welcome}>Welcome to React Native!</Text>
         <Text style={styles.instructions}>To get started, edit App.js</Text>
         <Text style={styles.instructions}>{instructions}</Text>
-        <Text style={styles.myStyle}>{hello + userName}</Text>
+        <Text style={styles.myStyle}>{hello + this.state.userName}</Text>
       </View>
     );
   }
