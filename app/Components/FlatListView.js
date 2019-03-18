@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { FlatList, StyleSheet, Text, View, Dimensions, TouchableOpacity, ActivityIndicator} from 'react-native'
-
+import { FlatList, StyleSheet, Text, Image, View, Dimensions, TouchableOpacity, ActivityIndicator} from 'react-native'
+import Toast, {DURATION} from 'react-native-easy-toast'
+import HttpUtil from '../Utils/HttpUtil'
 
 var screen = Dimensions.get('window');
 const PAGE_SIZE = 10;
@@ -18,10 +19,19 @@ export default class FlatListView extends Component {
 
   getItemView = ({item}) => {
     return (
-      <TouchableOpacity onPress={() => this.onItemPressed(item)}>
+      <TouchableOpacity onPress={() => {this.toast.show(item.name);}}>
         <View style={styles.item}>
-          <Text style={styles.itemText}>{item.index + 1}</Text>
-          <Text style={styles.itemText}>{item.name}</Text>
+          <Image
+            source={{uri:item.image}}
+            style={{width: 100, height: 100}}
+            
+            />
+            <View style={styles.layout_info}>
+              <Text style={styles.itemText}>姓名：{item.name}</Text>
+              <Text style={styles.itemText}>编号：{item.key}</Text>
+              <Text style={styles.itemText}>地址：{item.address}</Text>
+            </View>
+          
         </View>
       </TouchableOpacity>
     );
@@ -44,27 +54,29 @@ export default class FlatListView extends Component {
 
   loadData(reload) {
     this.setState({isReloading: reload});
-    setTimeout(() => {
+
+    HttpUtil.get('http://rap2api.taobao.org/app/mock/162333/getData')
+    .then(result => {
       mData = this.state.data;
       if (reload) {
         mData = [];
       }
 
-      for(let i=0; i<10; i++) {
-        let start = PAGE_SIZE * this.state.pageIndex;
-        let index = start + i;
-        mData.push({index:index , key:index+'', name:'abc' + index, age:'12'})
-      }
+      let keyStart = mData.length + 1;
+      result.data.map((item, index) => {
+        item.key = (keyStart + index).toString();
+        mData.push(item);
+        return item;
+      });
+
       this.setState({
         isReloading: false,
         data:mData,
       });
-    }, 2000);
+    })
+    .catch(error => this.toast.show(error));
   }
 
-  onItemPressed = (item) => {
-    alert(item.name);
-  }
 
   render() {
     return (
@@ -73,7 +85,7 @@ export default class FlatListView extends Component {
           data={this.state.data}
           renderItem={this.getItemView}
           //renderItem={(itemData) => this.getItemView(itemData.item)}
-          //ItemSeparatorComponent={this.getSeparator}
+          ItemSeparatorComponent={this.getSeparator}
           //keyExtractor={(index) => '' + index}
           //onPressItem={(index) => alert('item ' + index + 'pressed')}
           refreshing={this.state.isReloading}
@@ -88,6 +100,12 @@ export default class FlatListView extends Component {
             this.loadData(false);
           }}
         />
+
+        <Toast ref={toast=>{this.toast=toast}} 
+          position='bottom'
+          style={{backgroundColor:'#e4511e'}}
+          />
+
       </View>
     );
   }
@@ -103,7 +121,6 @@ export default class FlatListView extends Component {
 const styles = StyleSheet.create({
   container : {
     flex :1,
-    paddingTop :10
   },
   item : {
     flex: 1,
@@ -112,18 +129,29 @@ const styles = StyleSheet.create({
     justifyContent:'space-around',   // 子元素沿主轴的对齐方式
     marginLeft:10,
     marginRight:10,
+    marginTop:10,
     marginBottom:10,
-    //padding : 20
+    padding : 10,
+    borderRadius: 4,    // 圆角
+  },
+  layout_info : {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: "#ffffff",
+    justifyContent:'flex-start',   // 子元素沿主轴的对齐方式
+    marginLeft: 10,
+    padding : 10
   },
   itemText : {
-    padding : 10,
-    fontSize : 20,
-    height : 50,
+    fontSize : 14,
+    marginBottom: 10,
   },
   separator : {
     width:screen.width-20,
-    height:4,
-    backgroundColor:'green',
+    height:1,
+    alignSelf:'center',
+    backgroundColor:'#eeeeee',
+    borderStyle: 'dotted'
   },
   footer : {
     flexDirection: 'column',

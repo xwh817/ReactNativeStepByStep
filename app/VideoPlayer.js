@@ -3,6 +3,7 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Video from 'react-native-video';
 import StringUtil from './Utils/StringUtil'
 import SeekBar from './Components/SeekBar'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const videoUrl = 'http://s2.turingcat.com/eh5v.files/html5video/Turingcat2.mp4_2.m4v';
 
@@ -54,9 +55,13 @@ export default class VideoPlayer extends Component {
                     <TouchableOpacity onPress={() => {
                         this.setState({paused: !this.state.paused})
                     }}>
-                        <Image
-                            source={this.state.paused ? require('./images/ic_play.png') : require('./images/ic_pause.png')}
-                            style={{width: 40, height: 40, marginRight: 6}}/>
+
+                        <MaterialCommunityIcons
+                            name={this.state.paused ? 'play' : 'pause'}
+                            size={32}
+                            color={'#eeeeee'}
+                            style={{marginRight: 6}}/>
+
                     </TouchableOpacity>
 
 
