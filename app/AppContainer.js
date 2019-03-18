@@ -9,7 +9,8 @@ import FlatListView from './Components/FlatListView';
 import VideoPlayer from './VideoPlayer';
 import PanResponder from './PanResponder';
 import MyComponents from './MyComponents';
-import Animations from './Animations'
+import Animations from './Animations';
+import ScrollableTabView from './ScrollablePages'
 
 const rootNavigatior = createStackNavigator(
     {
@@ -39,6 +40,9 @@ const rootNavigatior = createStackNavigator(
             navigationOptions: {
                 header: null,
             }
+        },
+        ScrollableTabView: {
+            screen: ScrollableTabView,
         },
         Video: {
             screen: VideoPlayer,

@@ -21,7 +21,7 @@ export default class Hello extends Component {
   render() {
 
     const { navigation } = this.props;  // 从导航中取数据
-    const userName = navigation.getParam('name', 'unknown');
+    const userName = navigation && navigation.getParam('name', 'unknown');
     const hello = 'Hello React-native, I\'m ';
 
     return (

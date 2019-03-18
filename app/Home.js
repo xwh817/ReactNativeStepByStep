@@ -13,6 +13,7 @@ export default class Home extends Component {
                 <Button text='FlexLayout' onPress={() => navigate('Flex')}/>
                 <Button text='TabNavigator' onPress={() => navigate('TabNavigator')}/>
                 <Button text='DrawerNavigator' onPress={() => navigate('DrawerNavigator')}/>
+                <Button text='scrollable-tab-view' onPress={() => navigate('ScrollableTabView')}/>
                 <Button text='VideoPlayer' onPress={() => navigate('Video')}/>
                 <Button text='PanResponder手势响应' onPress={() => navigate('PanResponder')}/>
                 <Button text='自定义组件' onPress={() => navigate('MyComponents')}/>

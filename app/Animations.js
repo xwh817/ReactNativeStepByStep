@@ -6,7 +6,7 @@ import Button from './Components/Button';
 export default class Animations extends Component {
     render() {
         return (
-            <View style={{flex: 1, alignItems: 'stretch',}}>
+            <View style={{flex: 1, alignItems: 'stretch', padding:10}}>
 
                 <Button text='FadeIn' onPress={() => this.refs.fadeAnim.fadeIn()}/>
                 <Button text='FadeOut' onPress={() => this.refs.fadeAnim.fadeOut()}/>

@@ -19,13 +19,15 @@ export default class FlatListView extends Component {
 
   getItemView = ({item}) => {
     return (
-      <TouchableOpacity onPress={() => {this.toast.show(item.name);}}>
         <View style={styles.item}>
-          <Image
-            source={{uri:item.image}}
-            style={{width: 100, height: 100}}
-            
-            />
+
+          <TouchableOpacity onPress={() => {this.toast.show(item.name);}}>
+              <Image
+                source={{uri:item.image}}
+                style={{width: 100, height: 100}}
+                />
+          </TouchableOpacity>
+
             <View style={styles.layout_info}>
               <Text style={styles.itemText}>姓名：{item.name}</Text>
               <Text style={styles.itemText}>编号：{item.key}</Text>
@@ -33,7 +35,6 @@ export default class FlatListView extends Component {
             </View>
           
         </View>
-      </TouchableOpacity>
     );
   }
 
@@ -132,7 +133,12 @@ const styles = StyleSheet.create({
     marginTop:10,
     marginBottom:10,
     padding : 10,
-    borderRadius: 4,    // 圆角
+    //borderRadius: 4,    // 圆角
+    shadowColor:'grey',   // 添加阴影效果
+    shadowOffset:{width:1, height:1},
+    shadowOpacity:0.5,
+    shadowRadius:2,
+    elevation:2,  // android端要加上这个属性，不然阴影不出来
   },
   layout_info : {
     flex: 1,
