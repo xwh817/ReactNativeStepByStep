@@ -3,7 +3,7 @@ import {AsyncStorage} from 'react-native'
 export default class StorageUtil {
     
     /**
-     * 获取
+     * 获取，异步，获取结果为JavaScript对象。
      * @param key
      * @returns {Promise<T>|*|Promise.<TResult>}
      */
@@ -13,7 +13,7 @@ export default class StorageUtil {
 
 
     /**
-     * 保存，value可以是javascript对象
+     * 保存，javascript对象转为Json字符串保存
      * @param key
      * @param value
      * @returns {*}
